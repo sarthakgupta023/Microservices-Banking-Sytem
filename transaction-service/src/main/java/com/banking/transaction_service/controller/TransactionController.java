@@ -1,0 +1,65 @@
+package com.banking.transaction_service.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.banking.transaction_service.dto.TransactionRequest;
+import com.banking.transaction_service.dto.TransactionResponse;
+import com.banking.transaction_service.service.TransactionService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/api/transactions")
+@RequiredArgsConstructor
+public class TransactionController {
+
+    private final TransactionService transactionService;
+
+    // POST /api/transactions — initiate a new transaction
+    @PostMapping
+    public ResponseEntity<TransactionResponse> initiateTransaction(
+            @Valid @RequestBody TransactionRequest request) {
+        TransactionResponse response = transactionService.initiateTransaction(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // GET /api/transactions/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionResponse> getTransaction(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getTransaction(id));
+    }
+
+    // GET /api/transactions/reference/{referenceId}
+    @GetMapping("/reference/{referenceId}")
+    public ResponseEntity<TransactionResponse> getByReference(
+            @PathVariable String referenceId) {
+        return ResponseEntity.ok(transactionService.getTransactionByReference(referenceId));
+    }
+
+    // GET /api/transactions/account/{accountId} — transaction history
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<TransactionResponse>> getAccountTransactions(
+            @PathVariable Long accountId) {
+        return ResponseEntity.ok(transactionService.getAccountTransactions(accountId));
+    }
+
+    // Health check
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> health() {
+        return ResponseEntity.ok(Map.of(
+                "status", "UP",
+                "service", "transaction-service",
+                "port", "8083"));
+    }
+}

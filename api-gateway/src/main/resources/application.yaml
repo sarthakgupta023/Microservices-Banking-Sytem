@@ -1,0 +1,74 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      # CORS — React frontend ke liye
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"   # React dev server
+              - "http://localhost:5173"   # Vite dev server
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      # ── ROUTES — kaunsa URL kahan jaayega ──────────────
+      routes:
+
+        # Auth Service — token nahi chahiye register/login ke liye
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: JwtAuthFilter
+              args:
+                excludedPaths:
+                  - /api/auth/register
+                  - /api/auth/login
+                  - /api/auth/validate
+
+        # Account Service — JWT zaroori
+        - id: account-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - JwtAuthFilter
+
+        # Transaction Service — JWT zaroori
+        - id: transaction-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - JwtAuthFilter
+
+        # Notification Service — JWT zaroori
+        - id: notification-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - JwtAuthFilter
+
+# JWT config — same secret sab services mein
+jwt:
+  secret: ${JWT_SECRET:BankingAppSuperSecretKey2024ForJWTSigningMustBe256BitsLong!!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
