@@ -1,6 +1,5 @@
 package com.banking.transaction_service.config;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,16 +41,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Transaction-service has no users table.
-    // UserDetailsService is only needed by JwtAuthFilter to build the
-    // SecurityContext.
-    // We create a dummy in-memory user — the actual identity comes from the JWT
-    // claims.
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> User.builder()
                 .username(username)
-                .password(passwordEncoder().encode("dummy"))
+                .password("")
                 .authorities("ROLE_USER")
                 .build();
     }

@@ -13,17 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionEvent {
-
-    // Event type — consumer uses this to decide what notification to send
-    private String eventType; // TRANSACTION_COMPLETED, TRANSACTION_FAILED, TRANSACTION_REVERSED
-
+    private String eventType;
     private Long transactionId;
     private String referenceId;
     private Long senderAccountId;
     private Long receiverAccountId;
     private BigDecimal amount;
     private String currency;
-    private String transactionType; // TRANSFER, DEPOSIT, WITHDRAWAL
+    private String transactionType;
     private String status;
     private String description;
     private String failureReason;

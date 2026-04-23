@@ -2,11 +2,10 @@ package com.banking.transaction_service.dto;
 
 import java.math.BigDecimal;
 
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
-
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,6 @@ public class TransactionRequest {
     @NotNull(message = "Sender account ID is required")
     private Long senderAccountId;
 
-    // Optional for DEPOSIT type
     private Long receiverAccountId;
 
     @NotNull
@@ -27,7 +25,7 @@ public class TransactionRequest {
     private String currency;
 
     @NotNull
-    private String type; // TRANSFER, DEPOSIT, WITHDRAWAL
+    private String type;
 
     private String description;
 }

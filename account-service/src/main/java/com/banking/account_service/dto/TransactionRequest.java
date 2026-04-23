@@ -2,10 +2,9 @@ package com.banking.account_service.dto;
 
 import java.math.BigDecimal;
 
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
-
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

@@ -1,10 +1,9 @@
 package com.banking.account_service.dto;
 
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.banking.account_service.entity.Account;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

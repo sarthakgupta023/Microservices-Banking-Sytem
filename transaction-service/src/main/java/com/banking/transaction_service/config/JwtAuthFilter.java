@@ -2,6 +2,7 @@ package com.banking.transaction_service.config;
 
 import java.io.IOException;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,15 +11,18 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.micrometer.common.lang.NonNull;
+import com.banking.transaction_service.service.JwtService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -48,20 +52,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-
             if (jwtService.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
+                        userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

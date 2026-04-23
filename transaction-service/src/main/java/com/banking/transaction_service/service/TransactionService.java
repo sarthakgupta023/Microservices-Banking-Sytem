@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
 import com.banking.transaction_service.dto.TransactionRequest;
 import com.banking.transaction_service.dto.TransactionResponse;
+import com.banking.transaction_service.entity.Transaction;
 import com.banking.transaction_service.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,12 +23,8 @@ public class TransactionService {
     private final SagaOrchestrator sagaOrchestrator;
 
     public TransactionResponse initiateTransaction(TransactionRequest request) {
-
-        // Step 1: Generate unique reference ID for this transaction
         String referenceId = UUID.randomUUID().toString();
 
-        // Step 2: Save as PENDING immediately
-        // This gives us a record even if something crashes mid-saga
         Transaction transaction = Transaction.builder()
                 .referenceId(referenceId)
                 .senderAccountId(request.getSenderAccountId())
@@ -43,7 +39,6 @@ public class TransactionService {
         Transaction pendingTxn = transactionRepository.save(transaction);
         log.info("Transaction created as PENDING: referenceId={}", referenceId);
 
-        // Step 3: Execute correct Saga based on type
         Transaction result;
         switch (pendingTxn.getType()) {
             case TRANSFER:
@@ -58,7 +53,6 @@ public class TransactionService {
             default:
                 throw new IllegalArgumentException("Unknown transaction type: " + request.getType());
         }
-
         return mapToResponse(result);
     }
 
@@ -76,14 +70,12 @@ public class TransactionService {
 
     public List<TransactionResponse> getAccountTransactions(Long accountId) {
         return transactionRepository
-                .findBySenderAccountIdOrReceiverAccountIdOrderByCreatedAtDesc(
-                        accountId, accountId)
+                .findBySenderAccountIdOrReceiverAccountIdOrderByCreatedAtDesc(accountId, accountId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
-    // ---- Mapper ----
     private TransactionResponse mapToResponse(Transaction txn) {
         return TransactionResponse.builder()
                 .id(txn.getId())

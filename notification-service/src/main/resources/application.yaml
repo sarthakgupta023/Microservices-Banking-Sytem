@@ -5,25 +5,22 @@ spring:
   application:
     name: notification-service
 
-  # Kafka Consumer config
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
   kafka:
     bootstrap-servers: kafka:9092
     consumer:
-      # Group ID — Kafka tracks offset per group
-      # If you restart the service, it resumes from where it left off
       group-id: notification-group
-      # Read from the very beginning if no offset exists yet
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        # Trust these packages for deserialization — required for JsonDeserializer
         spring.json.trusted.packages: "com.banking.notification.dto,com.banking.transaction.dto"
-        # Map the incoming JSON to our local DTO class
         spring.json.value.default.type: com.banking.notification.dto.TransactionEvent
 
-  # MailHog — fake SMTP server for dev (catches all emails, never sends real ones)
-  # View sent emails at http://localhost:8025
   mail:
     host: mailhog
     port: 1025
@@ -36,7 +33,6 @@ spring:
           starttls:
             enable: false
 
-# Notification config
 notification:
   email:
     from: noreply@banking.com

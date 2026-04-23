@@ -1,6 +1,6 @@
 package com.banking.transaction_service.service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
@@ -27,22 +27,13 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Long extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("userId", Long.class));
-    }
-
-    public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
-    }
-
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        return claimsResolver.apply(extractAllClaims(token));
     }
 
     private Claims extractAllClaims(String token) {

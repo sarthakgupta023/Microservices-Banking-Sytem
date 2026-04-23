@@ -23,23 +23,18 @@ public class AccountServiceClient {
                 .build();
     }
 
-    // Debit (subtract) amount from an account
-    // Returns true if successful, false if insufficient funds or account not found
     public boolean debit(Long accountId, BigDecimal amount, String referenceId) {
         try {
             webClient.post()
                     .uri("/api/accounts/{id}/debit", accountId)
-                    .bodyValue(Map.of(
-                            "amount", amount,
-                            "referenceId", referenceId))
+                    .bodyValue(Map.of("amount", amount, "referenceId", referenceId))
                     .retrieve()
                     .toBodilessEntity()
-                    .block(); // synchronous — wait for response
+                    .block();
             log.info("Debit successful: accountId={}, amount={}", accountId, amount);
             return true;
         } catch (WebClientResponseException e) {
-            log.error("Debit failed: accountId={}, status={}, body={}",
-                    accountId, e.getStatusCode(), e.getResponseBodyAsString());
+            log.error("Debit failed: accountId={}, status={}", accountId, e.getStatusCode());
             return false;
         } catch (Exception e) {
             log.error("Debit error: accountId={}, error={}", accountId, e.getMessage());
@@ -47,14 +42,11 @@ public class AccountServiceClient {
         }
     }
 
-    // Credit (add) amount to an account
     public boolean credit(Long accountId, BigDecimal amount, String referenceId) {
         try {
             webClient.post()
                     .uri("/api/accounts/{id}/credit", accountId)
-                    .bodyValue(Map.of(
-                            "amount", amount,
-                            "referenceId", referenceId))
+                    .bodyValue(Map.of("amount", amount, "referenceId", referenceId))
                     .retrieve()
                     .toBodilessEntity()
                     .block();
@@ -69,10 +61,8 @@ public class AccountServiceClient {
         }
     }
 
-    // Compensating action — refund sender if credit step failed
     public boolean refund(Long accountId, BigDecimal amount, String referenceId) {
         log.warn("SAGA COMPENSATION: Refunding accountId={}, amount={}", accountId, amount);
-        // Refund = credit the sender back
         return credit(accountId, amount, "REFUND-" + referenceId);
     }
 }
