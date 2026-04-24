@@ -40,18 +40,21 @@ export default function Navbar() {
         }}>◆</div>
         <span style={{
           color: '#c9a84c', fontWeight: 700,
-          fontSize: 15, letterSpacing: 1
+          fontSize: 15, letterSpacing: 1,
         }}>VERDANT BANK</span>
       </div>
 
       {/* Links */}
-      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
         <NavLink to="/dashboard"      style={linkStyle}>Dashboard</NavLink>
-        <NavLink to="/create-account" style={linkStyle}>New Account</NavLink>
+        <NavLink to="/deposit"        style={linkStyle}>Deposit</NavLink>
+        <NavLink to="/withdraw"       style={linkStyle}>Withdraw</NavLink>
         <NavLink to="/transfer"       style={linkStyle}>Transfer</NavLink>
+        <NavLink to="/history"        style={linkStyle}>History</NavLink>
+        <NavLink to="/create-account" style={linkStyle}>+ Account</NavLink>
       </div>
 
-      {/* Avatar + Logout */}
+      {/* Avatar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>
           {user?.name}
@@ -73,7 +76,7 @@ export default function Navbar() {
               position: 'absolute', top: 44, right: 0,
               background: '#1e2d12',
               border: '1px solid rgba(201,168,76,0.25)',
-              borderRadius: 12, padding: 8, minWidth: 140,
+              borderRadius: 12, padding: 8, minWidth: 160,
               boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
             }}>
               <div style={{
@@ -90,9 +93,7 @@ export default function Navbar() {
                   color: '#e07c7c', fontSize: 13,
                   cursor: 'pointer', textAlign: 'left',
                   borderRadius: 8,
-                }}>
-                Sign out
-              </button>
+                }}>Sign out</button>
             </div>
           )}
         </div>

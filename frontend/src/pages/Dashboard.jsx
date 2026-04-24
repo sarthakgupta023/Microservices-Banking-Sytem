@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis, YAxis
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis, YAxis
 } from 'recharts';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -265,9 +265,9 @@ export default function Dashboard() {
               }}>
                 {[
                   { icon: '➕', label: 'New Account', path: '/create-account' },
-                  { icon: '💸', label: 'Transfer',    path: '/transfer' },
-                  { icon: '⬆️', label: 'Deposit',     path: '/transfer?type=deposit' },
-                  { icon: '⬇️', label: 'Withdraw',    path: '/transfer?type=withdraw' },
+                  { icon: '⬆️', label: 'Deposit',     path: '/deposit'        },
+                  { icon: '⬇️', label: 'Withdraw',    path: '/withdraw'       },
+                  { icon: '💸', label: 'Transfer',    path: '/transfer'       },
                 ].map(a => (
                   <button
                     key={a.label}
